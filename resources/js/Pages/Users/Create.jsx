@@ -1,0 +1,107 @@
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { Head, useForm } from '@inertiajs/react';
+
+export default function Create({ roles }) {
+    const { data, setData, post, processing, errors } = useForm({
+        name: '',
+        email: '',
+        password: '',
+        roles: []
+    });
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        post(route('users.store'));
+    };
+
+    const handleCheckboxChange = (roleName, checked) => {
+        if (checked) {
+            setData('roles', [...data.roles, roleName]);
+        } else {
+            setData('roles', data.roles.filter(name => name !== roleName));
+        }
+    };
+
+    return (
+        <AuthenticatedLayout
+            header={<h2 className="text-xl font-semibold leading-tight text-gray-800">Create User</h2>}
+        >
+            <Head title="Create User" />
+
+            <div className="py-12">
+                <div className="mx-auto max-w-4xl sm:px-6 lg:px-8">
+                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                        <form onSubmit={handleSubmit} className="space-y-6">
+                            {/* Name */}
+                            <div>
+                                <label className="block font-medium">Name</label>
+                                <input
+                                    type="text"
+                                    value={data.name}
+                                    onChange={(e) => setData('name', e.target.value)}
+                                    className="w-full border border-gray-300 rounded mt-1 px-3 py-2"
+                                />
+                                {errors.name && <div className="text-red-500 text-sm">{errors.name}</div>}
+                            </div>
+
+                            {/* Email */}
+                            <div>
+                                <label className="block font-medium">Email</label>
+                                <input
+                                    type="email"
+                                    value={data.email}
+                                    onChange={(e) => setData('email', e.target.value)}
+                                    className="w-full border border-gray-300 rounded mt-1 px-3 py-2"
+                                />
+                                {errors.email && <div className="text-red-500 text-sm">{errors.email}</div>}
+                            </div>
+
+                            {/* Password */}
+                            <div>
+                                <label className="block font-medium">Password</label>
+                                <input
+                                    type="password"
+                                    value={data.password}
+                                    onChange={(e) => setData('password', e.target.value)}
+                                    className="w-full border border-gray-300 rounded mt-1 px-3 py-2"
+                                />
+                                {errors.password && <div className="text-red-500 text-sm">{errors.password}</div>}
+                            </div>
+
+                            {/* Roles */}
+                            <div>
+                                <label htmlFor="roles" className="block font-medium mb-1">Assign Roles</label>
+                                <div className="grid gap-2">
+                                    {roles.map((role) => (
+                                        <label key={role} className="flex items-center space-x-2">
+                                            <input
+                                                type="checkbox"
+                                                onChange={(e) => handleCheckboxChange(role, e.target.checked)}
+                                                value={role}
+                                                className="form-checkbox h-5 w-5 text-blue-600 rounded"
+                                                id={role}
+                                            />
+                                            <span className="text-gray-800 capitalize">{role}</span>
+                                        </label>
+                                    ))}
+                                </div>
+                                {errors.roles && <p className="text-red-500 text-sm mt-1">{errors.roles}</p>}
+                            </div>
+
+                            {/* Submit Button */}
+                            <div className="text-right">
+                                <button
+                                    type="submit"
+                                    disabled={processing}
+                                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                                >
+                                    Create
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </AuthenticatedLayout>
+    );
+}
